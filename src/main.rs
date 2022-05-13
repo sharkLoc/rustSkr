@@ -1,5 +1,5 @@
 use std::fs::File;
-use std::io::{self,BufRead,BufReader};
+use std::io::{self,BufRead,BufReader,Write};
 
 use clap::Parser;
 
@@ -8,18 +8,23 @@ struct Opt{
         /// input fastq file
         #[clap(short, long)]
         input: String,
+
+		/// output file name
+		#[clap(short, long, default_value_t = String::from("result.txt"))]
+		output: String,
 }
 
 
 fn main() {
         let cli = Opt::parse();
-        let _ = fq2fa(cli.input);
+        let _ = fq2fa(cli.input, cli.output);
 }
 
 
-fn fq2fa(name: String) -> Result<(), io::Error> {
+fn fq2fa(name: String, out: String) -> Result<(), io::Error> {
         
 		let fp = File::open(name)?;
+		let mut fo = out_file(out)?;
         let reader = BufReader::new(fp);
         let mut num = 0;
         
@@ -28,10 +33,18 @@ fn fq2fa(name: String) -> Result<(), io::Error> {
             if num == 1 || num == 2{
                 if let Ok(line) = line {
                     if num == 1 {
-                        println!("{}",line.replace("@", ">"));
+						fo.write(
+							format!(
+								"{}\n", line.replace("@", ">")
+							).as_bytes()
+						).expect("output error!");
                     }
                     else{
-                        println!("{}",line);
+						fo.write(
+							format!(
+								"{}\n",line
+							).as_bytes()
+						).expect("output error!");
                     }                    
                 }
             }
@@ -43,4 +56,9 @@ fn fq2fa(name: String) -> Result<(), io::Error> {
             }
         }
         Ok(())
+}
+
+fn out_file(out: String) -> Result<File, io::Error> {
+	let fo = File::create(out)?;
+	Ok(fo)
 }
