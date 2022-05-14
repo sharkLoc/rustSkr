@@ -1,64 +1,65 @@
-use std::fs::File;
-use std::io::{self,BufRead,BufReader,Write};
+mod fastq;
+mod fasta;
 
-use clap::Parser;
+use fastq::{
+    fqtwofa::fq2fa,
+    fqinfo::read_fq
+};
+use fasta::fainfo::read_fa;
 
+use clap::{Parser, Subcommand};
+
+///skrTools rust version  ^_^
 #[derive(Parser,Debug)]
 struct Opt{
-        /// input fastq file
-        #[clap(short, long)]
-        input: String,
-
-		/// output file name
-		#[clap(short, long, default_value_t = String::from("result.txt"))]
-		output: String,
+        #[clap(subcommand)]
+        cli: Sub,
 }
 
+#[derive(Subcommand,Debug)]
+enum Sub{
+        /// trans fastq to fasta
+        Fq2fa{
+                /// input fastq file name
+                #[clap(short, long)]
+                input: String,
+                /// output fasta file name
+                #[clap(short, long)]
+                output: String,
+        },
+        /// summary fasta file
+        Fastat{
+            /// input fasta file name
+            #[clap(short, long)]
+            input: String,
+            /// output fasta file name
+            #[clap(short, long, default_value_t = String::from("summary.txt"))]
+            output: String,
+        },
+        /// summary fastq file
+        Fqstat{
+                /// input fastq file name
+                #[clap(short, long)]
+                input: String,
+                /// output summary result
+                #[clap(short,long)]
+                output: String,
+        },
+}
 
 fn main() {
-        let cli = Opt::parse();
-        let _ = fq2fa(cli.input, cli.output);
-}
-
-
-fn fq2fa(name: String, out: String) -> Result<(), io::Error> {
-        
-		let fp = File::open(name)?;
-		let mut fo = out_file(out)?;
-        let reader = BufReader::new(fp);
-        let mut num = 0;
-        
-		for line in reader.lines() {
-            num += 1;
-            if num == 1 || num == 2{
-                if let Ok(line) = line {
-                    if num == 1 {
-						fo.write(
-							format!(
-								"{}\n", line.replace("@", ">")
-							).as_bytes()
-						).expect("output error!");
-                    }
-                    else{
-						fo.write(
-							format!(
-								"{}\n",line
-							).as_bytes()
-						).expect("output error!");
-                    }                    
-                }
-            }
-            else if num == 4{
-                num = 0;
-            }
-            else{
-                continue;
-            }
+    let parse = Opt::parse();
+    
+    match parse.cli {
+        Sub::Fq2fa { input, output } => {
+            let _x = fq2fa(input, output);
+        },
+        Sub::Fastat { input, output } => {
+            let _x = read_fa(input, output);
         }
-        Ok(())
-}
-
-fn out_file(out: String) -> Result<File, io::Error> {
-	let fo = File::create(out)?;
-	Ok(fo)
+        Sub::Fqstat { input, output } => {
+            let _x = read_fq(input,output);
+        },
+    }
+    
 }
