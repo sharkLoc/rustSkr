@@ -21,7 +21,31 @@ OPTIONS:
 
 SUBCOMMANDS:
     fastat    summary fasta file
+    filter    filter pe fastq files
     fq2fa     trans fastq to fasta
     fqstat    summary fastq file
     help      Print this message or the help of the given subcommand(s)
+```
+
+## filter fastq file
+```
+rustSkr filter  -h
+rustSkr-filter
+filter pe fastq files
+
+USAGE:
+    rustSkr filter [OPTIONS] --read1 <READ1> --read2 <READ2> --out1 <OUT1> --out2 <OUT2>
+
+OPTIONS:
+    -h, --help                   Print help information
+        --len <LEN>              reads length filter threshold [default: 0]
+        --low <LOW>              base low quality threshold [default: 15]
+        --low-rate <LOW_RATE>    reads low quality rate [default: 0.5]
+        --mean <MEAN>            filter reads with low average quality less than [default: 30]
+        --out1 <OUT1>            output clean fq1 file name
+        --out2 <OUT2>            output clean fq2 file name
+        --rate-n <RATE_N>        filter reads with N rate >= threshold [default: 0.05]
+        --read1 <READ1>          input fq1 file name
+        --read2 <READ2>          input fq2 file name
+
 ```
