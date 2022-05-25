@@ -86,7 +86,7 @@ pub fn read_fa(name: String, out: String) -> Result<(),io::Error> {
 }
 
 
-fn out_file(name: String) -> Result<File, io::Error> {
+pub fn out_file(name: String) -> Result<File, io::Error> {
     let fo = File::create(name)?;
     Ok(fo)
 }
