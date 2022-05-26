@@ -2,6 +2,8 @@ use std::fs::File;
 use std::io::{self,Read,Write};
 use std::collections::HashMap;
 
+use flate2::read;
+
 
 #[derive(Debug)]
 #[allow(non_snake_case)]
@@ -22,11 +24,21 @@ impl Datf {
 }
 
 pub fn read_fa(name: String, out: String) -> Result<(),io::Error> {
-    let mut fp = File::open(name)?;
+    let fp = File::open(&name)?;
     let mut fo = out_file(out)?;
     
     let mut txt = String::new();
-    let _tmp = fp.read_to_string(&mut txt)?;
+    let mut gr = read::GzDecoder::new(&fp);
+    match gr.header() {
+        Some(_) => {
+            gr.read_to_string(&mut txt)?;
+        },
+        None => {
+            let mut fp = File::open(&name)?;
+            fp.read_to_string(&mut txt)?;
+        },
+    }
+    
     let mut content: Vec<&str> = txt.split(">").collect();
     let _tmp = content.remove(0); // skip first ">"
 
