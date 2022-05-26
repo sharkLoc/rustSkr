@@ -30,7 +30,7 @@ enum Sub{
         },
         /// summary fasta file
         Fastat{
-            /// input fasta file name
+            /// input fasta[.gz] file name
             #[clap(short, long)]
             input: String,
             /// output fasta file name
