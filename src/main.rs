@@ -12,6 +12,7 @@ use clap::{Parser, Subcommand};
 
 ///skrTools rust version  ^_^
 #[derive(Parser,Debug)]
+#[clap(setting = clap::AppSettings::DeriveDisplayOrder)]
 struct Opt{
         #[clap(subcommand)]
         cli: Sub,
@@ -19,6 +20,7 @@ struct Opt{
 
 #[derive(Subcommand,Debug)]
 enum Sub{
+        #[clap(setting = clap::AppSettings::DeriveDisplayOrder)]
         /// trans fastq to fasta
         Fq2fa{
                 /// input fastq file name
@@ -28,6 +30,7 @@ enum Sub{
                 #[clap(short, long)]
                 output: String,
         },
+        #[clap(setting = clap::AppSettings::DeriveDisplayOrder)]
         /// summary fasta file
         Fastat{
             /// input fasta[.gz] file name
@@ -37,6 +40,7 @@ enum Sub{
             #[clap(short, long, default_value_t = String::from("summary.txt"))]
             output: String,
         },
+        #[clap(setting = clap::AppSettings::DeriveDisplayOrder)]
         /// summary fastq file
         Fqstat{
                 /// input fastq file name
@@ -46,6 +50,7 @@ enum Sub{
                 #[clap(short,long)]
                 output: String,
         },
+        #[clap(setting = clap::AppSettings::DeriveDisplayOrder)]
         ///filter pe fastq files.
         Filter{
             ///input fq1 file name.
